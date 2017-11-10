@@ -20,6 +20,8 @@ services:
       - SMTP_PASS=password
       - SMTP_REWRITE_DOMAIN=pdd-host.ru
       - SMTP_HOSTNAME=www.host.ru
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_GROUP=www-data
   mysql:
     build: ./mysql
     volumes:

@@ -18,14 +18,38 @@
  - MYSQL_PASSWORD=желаемый пароль к БД для пользователя bitrix
  - MYSQL_ROOT_PASSWORD=желаемый пароль к БД для пользователя root
 
-затем выполнить
-
-`id -u ; id -g`
-
-Если UID и GID данного пользователя не равны 1000:1000, то в apache/Dockerfile заменить 1000 на UID и GID данного пользователя (в строках 15 и 16)
-
 `docker-compose build && docker-compose up -d`
 
 затем открыть http://host:8000/restore.php
 
+# Примечание
 
+По умолчанию файлы Битрикс сохраняются в папку www от пользователя:группы 33 (www-data). Если на хостовой системе необходим доступ 
+к файлам от имени локального пользователя, то 
+используются переменные среды APACHE_RUN_USER и APACHE_RUN_GROUP. Для проброса локальных имён пользователей в контейнер с Apache используйте доступ
+к файлам /etc/passwd и /etc/group (добавьте их в раздел volumes для сервиса apache).
+
+```
+  apache:
+    build: ./apache
+    ports:
+      - 8000:80
+    volumes:
+      - ./www:/var/www/html
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    links:
+      - mysql
+    restart: always
+    ulimits:
+      stack: -1
+    environment:
+      - CRON_INTERVAL_SEC=60
+      - SMTP_MAILHUB=smtp.yandex.ru:465
+      - SMTP_USER=server@pdd-host.ru
+      - SMTP_PASS=password
+      - SMTP_REWRITE_DOMAIN=pdd-host.ru
+      - SMTP_HOSTNAME=www.host.ru
+      - APACHE_RUN_USER=localuser
+      - APACHE_RUN_GROUP=localgroup
+```
