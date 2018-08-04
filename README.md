@@ -20,7 +20,7 @@
 
 `docker-compose build && docker-compose up -d`
 
-затем открыть http://host:8000/restore.php или http://host:8000/bitrix_setup.php
+затем открыть http://host:8000/restore.php или http://host:8000/bitrixsetup.php
 
 # Примечание
 
