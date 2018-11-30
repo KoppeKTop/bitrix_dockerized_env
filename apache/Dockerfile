@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM php:7.2.12-apache
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
         rm -r /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
-RUN docker-php-ext-install -j$(nproc) gd mysqli mcrypt pdo pdo_mysql mbstring tokenizer iconv
+RUN pecl install mcrypt-1.0.1
+RUN docker-php-ext-enable mcrypt
+RUN docker-php-ext-install -j$(nproc) gd mysqli pdo pdo_mysql mbstring tokenizer iconv
 RUN a2enmod rewrite
 COPY start.sh /usr/local/sbin/start.sh
 COPY php-mail.ini /usr/local/etc/php/conf.d/mail.ini
